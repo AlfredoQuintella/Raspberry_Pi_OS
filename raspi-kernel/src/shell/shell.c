@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <sys/wait.h>
 
 #define SHELL_VERSION "1.0"
 
@@ -15,6 +17,11 @@
 /* be solved (and this method have to be implemented) just by       */
 /* checking the number of arguments passed (argc).                  */
 /********************************************************************/
+/* We'll be implmeneted a fork mode. The fork generates a son shell */
+/* to execute the command. With this we dont have to wait in the    */
+/* father shell. Basic commands like version, ping and others dont  */
+/* need a fork, but more complex function need one.                 */
+/********************************************************************/
 
 // defining the type of function for the command
 typedef void (*CommandFunction)(char *);
@@ -24,6 +31,34 @@ typedef struct {
     const char *name;
     CommandFunction function;
 } CommandEntry;
+
+/********************************************************************/
+
+/* int execute_command (char *args)
+{
+  pid_t pid, wpid;
+  int status;
+
+  pid = fork();
+  if (pid == 0) {
+    // Child process
+    if (execvp(args[0], args) == -1) {
+      perror("lsh");
+    }
+    exit(EXIT_FAILURE);
+  } else if (pid < 0) {
+    // Error forking
+    perror("lsh");
+  } else {
+    // Parent process
+    do {
+      wpid = waitpid(pid, &status, WUNTRACED);
+    } while (!WIFEXITED(status) && !WIFSIGNALED(status));
+  }
+
+  return 1;
+}
+ */
 
 /********************************************************************/
 
